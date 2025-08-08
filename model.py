@@ -374,3 +374,108 @@ lgb_model.booster_.save_model("lgb_model.txt")
 model.save("hetero_nn.keras")
 
 print("\nAll done. Models + scalers saved to disk.")
+
+
+
+import matplotlib.pyplot as plt
+
+errors = ensemble_pred - y_test
+abs_errors = np.abs(errors)
+
+# Precompute stats
+mean_err = np.mean(errors)
+median_err = np.median(errors)
+mae = np.mean(abs_errors)
+std_err = np.std(errors)
+min_err = np.min(errors)
+max_err = np.max(errors)
+q25 = np.percentile(abs_errors, 25)
+q50 = np.percentile(abs_errors, 50)
+q75 = np.percentile(abs_errors, 75)
+q90 = np.percentile(abs_errors, 90)
+q95 = np.percentile(abs_errors, 95)
+
+fig, axes = plt.subplots(3, 2, figsize=(15, 12))
+
+# 1) Histogram of errors
+axes[0, 0].hist(errors, bins=20, color='skyblue', edgecolor='black')
+axes[0, 0].axvline(0, color='red', linestyle='--', linewidth=1)
+axes[0, 0].axvline(mean_err, color='green', linestyle='-', linewidth=2, label=f"Mean: {mean_err:.2f}")
+axes[0, 0].axvline(median_err, color='orange', linestyle='-', linewidth=2, label=f"Median: {median_err:.2f}")
+axes[0, 0].set_title("Error Distribution (Predicted - Actual)")
+axes[0, 0].set_xlabel("Error (°C)")
+axes[0, 0].set_ylabel("Frequency")
+axes[0, 0].legend()
+
+# Annotate text inside histogram
+axes[0, 0].text(0.95, 0.95,
+                f"Mean: {mean_err:.2f}\nMedian: {median_err:.2f}\nStd: {std_err:.2f}",
+                transform=axes[0, 0].transAxes,
+                ha='right', va='top',
+                bbox=dict(facecolor='white', alpha=0.7, edgecolor='black'))
+
+# 2) Boxplot of errors
+box = axes[0, 1].boxplot(errors, vert=False, patch_artist=True,
+                         boxprops=dict(facecolor='lightgreen'))
+axes[0, 1].set_title("Boxplot of Prediction Errors")
+axes[0, 1].set_xlabel("Error (°C)")
+axes[0, 1].text(0.95, 0.95,
+                f"Min: {min_err:.2f}\nQ1: {np.percentile(errors, 25):.2f}\nMedian: {median_err:.2f}\nQ3: {np.percentile(errors, 75):.2f}\nMax: {max_err:.2f}",
+                transform=axes[0, 1].transAxes,
+                ha='right', va='top',
+                bbox=dict(facecolor='white', alpha=0.7, edgecolor='black'))
+
+# 3) Scatter plot: predicted vs actual
+axes[1, 0].scatter(y_test, ensemble_pred, alpha=0.7)
+axes[1, 0].plot([y_test.min(), y_test.max()],
+                [y_test.min(), y_test.max()],
+                'r--', lw=2)
+axes[1, 0].set_title("Predicted vs Actual High Temperatures")
+axes[1, 0].set_xlabel("Actual (°C)")
+axes[1, 0].set_ylabel("Predicted (°C)")
+axes[1, 0].text(0.05, 0.95,
+                f"MAE: {mae:.2f}\nMSE: {np.mean(errors**2):.2f}\nR² ~ {1 - np.sum(errors**2)/np.sum((y_test - np.mean(y_test))**2):.2f}",
+                transform=axes[1, 0].transAxes,
+                ha='left', va='top',
+                bbox=dict(facecolor='white', alpha=0.7, edgecolor='black'))
+
+# 4) Error over time
+axes[1, 1].plot(meta_dates[test_idx], errors, marker='o', linestyle='-', alpha=0.7)
+axes[1, 1].axhline(0, color='black', linewidth=1, linestyle='--')
+axes[1, 1].set_title("Error Over Time")
+axes[1, 1].set_xlabel("Date")
+axes[1, 1].set_ylabel("Error (°C)")
+axes[1, 1].tick_params(axis='x', rotation=45)
+axes[1, 1].text(0.05, 0.95,
+                f"Mean Err: {mean_err:.2f}\nStd Err: {std_err:.2f}",
+                transform=axes[1, 1].transAxes,
+                ha='left', va='top',
+                bbox=dict(facecolor='white', alpha=0.7, edgecolor='black'))
+
+# 5) Cumulative absolute error
+axes[2, 0].plot(np.cumsum(abs_errors), color='purple')
+axes[2, 0].set_title("Cumulative Absolute Error")
+axes[2, 0].set_xlabel("Test Sample Index")
+axes[2, 0].set_ylabel("Cumulative |Error| (°C)")
+axes[2, 0].text(0.95, 0.95,
+                f"Final Total: {np.cumsum(abs_errors)[-1]:.2f}",
+                transform=axes[2, 0].transAxes,
+                ha='right', va='top',
+                bbox=dict(facecolor='white', alpha=0.7, edgecolor='black'))
+
+# 6) Error quantiles
+quantiles = np.linspace(0, 100, 21)
+quantile_vals = np.percentile(abs_errors, quantiles)
+axes[2, 1].plot(quantiles, quantile_vals, marker='o')
+axes[2, 1].set_title("Error Percentiles")
+axes[2, 1].set_xlabel("Percentile")
+axes[2, 1].set_ylabel("|Error| (°C)")
+axes[2, 1].grid(True, linestyle='--', alpha=0.5)
+axes[2, 1].text(0.95, 0.95,
+                f"25%: {q25:.2f}\n50%: {q50:.2f}\n75%: {q75:.2f}\n90%: {q90:.2f}\n95%: {q95:.2f}",
+                transform=axes[2, 1].transAxes,
+                ha='right', va='top',
+                bbox=dict(facecolor='white', alpha=0.7, edgecolor='black'))
+
+plt.tight_layout()
+plt.show()
