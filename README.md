@@ -2,15 +2,6 @@
 
 <a id="readme-top"></a>
 
-<!-- PROJECT SHIELDS -->
-
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![project_license][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
@@ -18,12 +9,12 @@
   <p align="center">
     Real-time weather forecasting using ensemble machine learning models for prediction markets
     <br />
-    <a href="https://github.com/github_username/kairovia"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/PraneethO/kairovia"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/github_username/kairovia/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/PraneethO/kairovia/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     &middot;
-    <a href="https://github.com/github_username/kairovia/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/PraneethO/kairovia/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
@@ -227,10 +218,7 @@ All features are standardized using scikit-learn's `StandardScaler` before model
 ## Roadmap
 
 - [ ] Add support for multi-location predictions
-- [ ] Implement real-time inference API (Flask/FastAPI)
-- [ ] Add Docker containerization for deployment
 - [ ] Extend to multi-day ahead forecasts
-- [ ] Add support for additional weather variables (humidity, precipitation probability)
 - [ ] Implement automated retraining pipeline
 - [ ] Add model monitoring and drift detection
 
@@ -268,9 +256,9 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+PraneethO - potthi [at] berkeley [dot] edu
 
-Project Link: [https://github.com/github_username/kairovia](https://github.com/github_username/kairovia)
+Project Link: [https://github.com/PraneethO/kairovia](https://github.com/PraneethO/kairovia)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
